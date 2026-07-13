@@ -1,3 +1,7 @@
+# See https://docs.djangoproject.com/en/dev/howto/deployment/checklist/
+# Run pre-deployment health scan: `uv run manage.py check --deploy`
+# Fix all the warnings, and then deploy your app
+
 from pathlib import Path
 import os
 from environs import Env
@@ -9,15 +13,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Create environs Env instance
 env = Env()
 
-# Read .env file based on DJANGO_ENV (dev (default) or prod)
-env_file = Path(BASE_DIR) / f".env.{os.environ.get('DJANGO_ENV', 'dev')}"
+# Read .env file based on DJANGO_ENV: development (default) - production
+env_file = Path(BASE_DIR) / f".env.{os.environ.get('DJANGO_ENV', 'development')}"
 env.read_env(str(env_file))
-
-# Quick-start production settings - unsuitable for production
-# See https://docs.djangoproject.com/en/dev/howto/deployment/checklist/
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 # SECURITY WARNING: keep the secret key used in production secret!
+# Generate new SECRET_KEY: `uv run python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"`
 SECRET_KEY = env.str("SECRET_KEY")
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
@@ -48,8 +50,8 @@ INSTALLED_APPS = [
     "crispy_bootstrap5",
     "debug_toolbar",
     # Local
-    "accounts",
-    "pages",
+    "accounts.apps.AccountConfig",
+    "pages.apps.PagesConfig",
 ]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#middleware
