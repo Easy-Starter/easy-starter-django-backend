@@ -40,14 +40,10 @@ Detailed architecture, conventions, deployment profiles, and extension guides be
 
 ## Quick start
 
-1. Click **Use this template** or run:
-
-   ```bash
-   gh repo create my-project --template easy-starter/easy-starter-django-backend --private --clone
-   cd my-project
-   ```
+1. Click **Use this template**, create new repo in your own account, and clone it on your system.
 
 2. Set the project name, package metadata, and environment values.
+
 3. Start the project:
 
    ```bash
@@ -83,18 +79,8 @@ Released under the [MIT License](LICENSE).
 <!--
 
 
-## 📖 Installation
-
-**Easy Starter Django** can be installed via Pip or Docker. To start, clone the repo to your local computer and change into the proper directory.
-
-```
-$ git clone https://github.com/Easy-Starter/easy-starter-django.git
-$ cd easy-starter-django
-```
 
 ### uv
-
-You can use [uv](https://docs.astral.sh/uv/) to create a dedicated virtual environment.
 
 ```
 $ uv sync
@@ -111,10 +97,10 @@ $ uv run manage.py runserver
 
 ### Docker
 
-To use Docker with PostgreSQL as the database update the `DATABASES` section of `easy_starter_django/settings.py` to reflect the following:
+To use Docker with PostgreSQL as the database update the `DATABASES` section of `config/settings.py` to reflect the following:
 
 ```python
-# easy_starter_django/settings.py
+# config/settings.py
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -127,7 +113,7 @@ DATABASES = {
 }
 ```
 
-The `INTERNAL_IPS` configuration in `easy_starter_django/settings.py` must be also be updated:
+The `INTERNAL_IPS` configuration in `config/settings.py` must be also be updated:
 
 ```python
 # config/settings.py
@@ -148,8 +134,7 @@ $ docker compose exec web python manage.py createsuperuser
 
 ## Create new repo from the template
 
-- change all the easy_starter_django in the project
-- Ctrl + Shift + F -> search "easy_starter_django" -> replace all with Ctrl + Shift + H
+
 - remove .env track from git
 
 ```bash

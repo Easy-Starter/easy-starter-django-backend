@@ -1,2 +1,18 @@
-# Exclude the project virtual environment from image builds
-.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+.env.*
+.git
+.gitignore
+README.md
+.nyc_output
+.coverage
+htmlcov/
+.DS_Store
+staticfiles/
+media/

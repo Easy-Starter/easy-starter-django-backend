@@ -1,31 +1,42 @@
-# First, build the application in the `/app` directory.
-FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS builder
-ENV UV_COMPILE_BYTECODE=1
-ENV UV_LINK_MODE=copy
-WORKDIR /app
-RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,source=uv.lock,target=uv.lock \
-    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --frozen --no-install-project --no-dev
-ADD . /app
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-dev
+# ---- Base Image ----
+FROM python:3.12-slim
 
-# Then, use a final image without uv
-FROM python:3.12-slim-bookworm
-
-# Copy the application from the builder
-COPY --from=builder --chown=app:app /app /app
-
+# ---- Set work directory ----
 WORKDIR /app
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-ENV PATH="/app/.venv/bin:$PATH"
+# ---- Environment variables ----
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    DJANGO_ENV=production \
+    DJANGO_SETTINGS_MODULE=config.settings.production \
+    PIP_ROOT_USER_ACTION=ignore \
+    HOME=/tmp
 
-# Expose port 8000
+# ---- System dependencies ----
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# ---- Copy requirements ----
+COPY requirements.txt .
+
+# ---- Upgrade pip and install Python dependencies ----
+RUN pip install --upgrade pip && \
+    pip install --default-timeout=120 --no-cache-dir -r requirements.txt
+
+# ---- Copy project files ----
+COPY . .
+
+# ---- RUN executables ----
+RUN python manage.py check
+RUN python manage.py collectstatic --noinput
+RUN chmod +x /app/scripts/entrypoint.sh
+
+# ---- Expose port ----
 EXPOSE 8000
 
-# Use gunicorn on port 8000
-CMD ["gunicorn", "--bind", ":8000", "--workers", "2", "easy_starter_django.wsgi"]
+# ---- Run entrypoint ----
+ENTRYPOINT ["/app/scripts/entrypoint.sh"]

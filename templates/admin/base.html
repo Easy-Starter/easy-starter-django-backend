@@ -1,0 +1,64 @@
+{% extends "admin/base.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+{% endblock %}
+
+{% block title %}
+  {% if subtitle %}
+    {{ subtitle }} |
+  {% endif %}
+
+  {{ title }} |
+  {% translate "Mirza administration" %}
+{% endblock %}
+
+{% block branding %}
+  <div id="site-name">
+    <a href="{% url 'admin:index' %}">
+      {% translate "Mirza administration" %}
+    </a>
+  </div>
+{% endblock %}
+
+{% block userlinks %}
+  {% get_current_language as CURRENT_LANGUAGE %}
+
+  <form
+    method="post"
+    action="{% url 'set_language' %}"
+    class="language-switcher"
+  >
+    {% csrf_token %}
+
+    <input
+      type="hidden"
+      name="next"
+      value="{{ request.get_full_path }}"
+    >
+
+    <select
+      id="admin-language"
+      name="language"
+      onchange="this.form.submit()"
+    >
+      <option
+        value="fa"
+        {% if CURRENT_LANGUAGE == "fa" %}selected{% endif %}
+      >
+        فارسی
+      </option>
+
+      <option
+        value="en"
+        {% if CURRENT_LANGUAGE == "en" %}selected{% endif %}
+      >
+        English
+      </option>
+    </select>
+  </form>
+
+  {{ block.super }}
+{% endblock %}
