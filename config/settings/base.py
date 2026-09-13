@@ -20,7 +20,7 @@ env.read_env(str(env_file))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # Generate new SECRET_KEY: `uv run python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"`
-SECRET_KEY = env.str("DJANGO_SECRET_KEY")
+SECRET_KEY = env.str("DJANGO_SECRET_KEY", default="unsafe-development-key-change-me")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DJANGO_DEBUG", default=False)
